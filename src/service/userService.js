@@ -11,6 +11,11 @@ class UserService{
     user = db.query("SELECT * FROM users WHERE full_name = ? ORDER BY user_id DESC LIMIT 1", [name])
     if(!user) return {code: 404, message: "User not found"}
   }
+
+  static async findById(id) {
+    const [rows] = await db.query("SELECT * FROM users WHERE user_id = ?", [id]);
+    return rows[0];
+  }  
   static async createOTP(email) {
       const otp = UserService.generateOTP();
       const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // expires in 5 mins
@@ -58,7 +63,6 @@ class UserService{
       [name]
     );
     if (!rows.length) return { code: 403, message: "Invalid username or password" };
-  
     const user = rows[0];
     const isMatch = await bcrypt.compare(pw, user.password_hash);
   
@@ -70,6 +74,14 @@ class UserService{
     });
   
     return { code: 200, message: "Login successful", token };
+  }
+
+  static async getUsers(){
+    const [rows] = await db.query(
+      "SELECT * FROM users"
+    );
+    if (!rows.length) return { code: 404, message: "No users found" };
+    return { code: 200, message: "Success", data: rows };
   }
   
 }

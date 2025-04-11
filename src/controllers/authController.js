@@ -36,8 +36,11 @@ class AuthController{
         if (!name || !password) {
           return res.status(400).json({ message: "Missing required fields" });
         }
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const result = await UserService.checkLogin(name, password);
+      
         return res.status(result.code).json(result);
+        
+        
       });
 }
 
