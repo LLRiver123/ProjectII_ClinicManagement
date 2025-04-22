@@ -17,7 +17,7 @@ const checkAuth = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        const user = await UserService.findById(decoded.user_id);
+        const user = await UserService.findById(decoded.id);
 
         if (!user) {
             return res.status(401).json({ message: "Người dùng không tồn tại" });
