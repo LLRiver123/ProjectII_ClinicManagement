@@ -10,5 +10,7 @@ route.get("/allUsers",isAdmin,userController.getUsers);
 
 route.post("/makeAppointment", checkAuth, userController.makeAppointment);
 route.post("/cancelAppointment", checkAuth, userController.cancelAppointment);
+route.post("/addMedicine", isAdmin, userController.addMedicine);
+route.post("/updateMedicine", isAdmin, userController.updateMedicine);
 
 module.exports = route;
