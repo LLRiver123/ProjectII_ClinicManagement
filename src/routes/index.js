@@ -5,6 +5,8 @@ const studentController = require('../controllers/studentController');
 router.get('/', studentController.getAllStudents);
 router.use("/access", require("./access"));
 router.use("/user", require("./user"));
+router.use("/meds", require("./meds"));
+
 
 
 module.exports = router;

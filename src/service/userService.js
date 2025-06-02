@@ -113,20 +113,6 @@ class UserService{
   
     return { code: 200, message: "Appointment canceled successfully" };
   }
-
-  static async addMedicine(name, description, quantity, unit, price) {
-    // Check if the medicine already exists
-    const [existingRows] = await db.query("SELECT * FROM medicines WHERE name = ?", [name]);
-    if (existingRows.length) return { code: 409, message: "Medicine already exists" };
-  
-    // Insert new medicine into the database
-    await db.query(
-      "INSERT INTO medicines (name, description, quantity, unit, price) VALUES (?, ?, ?, ?, ?)",
-      [name, description, quantity, unit, price]
-    );
-  
-    return { code: 200, message: "Medicine added successfully" };
-  }
 }
 
 

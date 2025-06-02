@@ -1,4 +1,5 @@
 const express = require('express')
+const cron = require("node-cron");
 
 require('dotenv').config()
 
@@ -20,4 +21,17 @@ app.use((err, req, res, next) => {
         error: true,
         message: err.message || "Đã có lỗi xảy ra!"
     });
+});
+
+cron.schedule("*/5 * * * *", async () => {
+  try {
+    const [result] = await db.query(`
+      UPDATE appointments
+      SET status = 'cancelled'
+      WHERE status = 'confirmed' AND appointment_time < NOW()
+    `);
+    console.log(`Auto-cancelled ${result.affectedRows} appointment(s).`);
+  } catch (err) {
+    console.error("Error auto-cancelling appointments:", err);
+  }
 });
