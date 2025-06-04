@@ -10,6 +10,9 @@ route.get("/allUsers",isAdmin,userController.getUsers);
 
 route.post("/makeAppointment", checkAuth, userController.makeAppointment);
 route.post("/cancelAppointment", checkAuth, userController.cancelAppointment);
+route.post("/updateRole", isAdmin, userController.updateRole);
+route.get("/getAppointments", checkAuth, userController.getAppointments);
+route.post("/deleteUser", isAdmin, userController.deleteUser);
 
 
 module.exports = route;

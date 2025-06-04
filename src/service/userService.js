@@ -84,34 +84,50 @@ class UserService{
     return { code: 200, message: "Success", data: rows };
   }
   
-  static async makeAppointment(userId, appointmentDate, doctorId) {
+
+  static async updateRole(userId, role) {
     // Check if the user exists
     const [userRows] = await db.query("SELECT * FROM users WHERE user_id = ?", [userId]);
     if (!userRows.length) return { code: 404, message: "User not found" };
   
-    // Insert appointment into the database
+    // Update user role
     await db.query(
-      "INSERT INTO appointments (patient_id, appointment_time, doctor_id) VALUES (?, ?, ?)",
-      [userId, appointmentDate, doctorId]
+      "UPDATE users SET role = ? WHERE user_id = ?",
+      [role, userId]
     );
   
-    return { code: 200, message: "Appointment created successfully" };
+    return { code: 200, message: "User role updated successfully" };
   }
 
-  static async cancelAppointment(userId, appointmentId) {
+  static async register(name, email, password) {
+    // Check if the user already exists
+    const [existingUser] = await db.query("SELECT * FROM users WHERE full_name = ? OR email = ?", [name, email]);
+    if (existingUser.length) return { code: 409, message: "User already exists" };
+  
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+  
+    // Insert new user into the database
+    await db.query(
+      "INSERT INTO users (full_name, email, password_hash) VALUES (?, ?, ?)",
+      [name, email, hashedPassword]
+    );
+  
+    return { code: 201, message: "User registered successfully" };
+  }
+
+  static async deleteUser(userId) {
     // Check if the user exists
     const [userRows] = await db.query("SELECT * FROM users WHERE user_id = ?", [userId]);
     if (!userRows.length) return { code: 404, message: "User not found" };
   
-    // Delete appointment from the database
-    const result = await db.query(
-      "DELETE FROM appointments WHERE appointment_id = ? AND user_id = ?",
-      [appointmentId, userId]
+    // Delete user from the database
+    await db.query(
+      "DELETE FROM users WHERE user_id = ?",
+      [userId]
     );
   
-    if (result.affectedRows === 0) return { code: 404, message: "Appointment not found" };
-  
-    return { code: 200, message: "Appointment canceled successfully" };
+    return { code: 200, message: "User deleted successfully" };
   }
 }
 

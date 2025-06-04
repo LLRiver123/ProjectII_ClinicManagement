@@ -47,6 +47,35 @@ class AuthController{
         
         
       });
+      register = asyncHandler(async (req, res) => {
+        const { name, email, password } = req.body;
+        if (!name || !email || !password) {
+          return res.status(400).json({ message: "Missing required fields" });
+        }
+    
+        const result = await UserService.register(name, email, password);
+        if (result.code !== 200) {
+          await LogService.createLog("Register failed", result.message, "error");
+          return res.status(result.code).json(result);
+        }
+        return res.status(result.code).json(result);
+      });
+
+      logout = asyncHandler(async (req, res) => {
+        const token = req.headers.authorization?.split(" ")[1];
+        if (!token) {
+          return res.status(401).json({ message: "Unauthorized" });
+        }
+    
+        try {
+          jwt.verify(token, JWT_SECRET);
+          // Invalidate the token (this could be done by adding it to a blacklist)
+          // For simplicity, we just return a success message
+          return res.status(200).json({ message: "Logged out successfully" });
+        } catch (error) {
+          return res.status(401).json({ message: "Invalid token" });
+        }
+      });
 }
 
 module.exports = new AuthController();

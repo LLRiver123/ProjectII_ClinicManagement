@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const UserService = require("../service/userService");
 const LogService = require("../service/logService");
 const MedicineService = require("../service/medicineService");
+const AppointmentService = require("../service/appointmentService");
 const {asyncHandler} = require("../middleware/asyncHandler");
 // const {checkAuth, isAdmin} = require("../middleware/auth");
 
@@ -13,6 +14,34 @@ class UserController{
         const users = await UserService.getUsers();
         return res.status(200).json(users);
         });
+
+    deleteUser = asyncHandler(async (req, res) => {
+        const { userId } = req.body;    
+        if (!userId) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+        const result = await UserService.deleteUser(userId);
+        if (result.code !== 200) {
+            await LogService.createLog("Delete user failed", result.message, "error");
+            return res.status(result.code).json(result);
+        }
+        await LogService.createLog("Delete user success", result.message, "success");
+        return res.status(result.code).json(result);
+        });    
+
+    updateRole = asyncHandler(async (req, res) => {
+        const { userId, role } = req.body;
+        if (!userId || !role) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+        const result = await UserService.updateRole(userId, role);
+        if (result.code !== 200) {
+            await LogService.createLog("Update role failed", result.message, "error");
+            return res.status(result.code).json(result);
+        }
+        await LogService.createLog("Update role success", result.message, "success");
+        return res.status(result.code).json(result);
+        });    
     
     makeAppointment = asyncHandler(async (req, res) => {
         const { userId, appointmentDate, doctorId } = req.body;
@@ -24,7 +53,7 @@ class UserController{
             await LogService.createLog("Make appointment failed", "Doctor ID is required", "error");
             return res.status(400).json({ message: "Doctor ID is required" });
         }
-        const result = await UserService.makeAppointment(userId, appointmentDate, doctorId);
+        const result = await AppointmentService.makeAppointment(userId, appointmentDate, doctorId);
         if (result.code !== 200) {
             await LogService.createLog("Make appointment failed", result.message, "error");
             return res.status(result.code).json(result);
@@ -38,9 +67,23 @@ class UserController{
           return res.status(400).json({ message: "Missing required fields" });
         }
     
-        const result = await UserService.cancelAppointment(userId, appointmentId);
+        const result = await AppointmentService.cancelAppointment(userId, appointmentId);
         return res.status(result.code).json(result);
         });
+
+    getAppointments = asyncHandler(async (req, res) => {
+        const { userId } = req.body;    
+        if (!userId) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+        const appointments = await AppointmentService.getAppointments(userId);
+        if (appointments.code !== 200) {
+            await LogService.createLog("Get appointments failed", appointments.message, "error");
+            return res.status(appointments.code).json(appointments);
+        }
+        await LogService.createLog("Get appointments success", "Fetched appointments successfully", "success");
+        return res.status(appointments.code).json(appointments);
+    });    
 
     addMedicine = asyncHandler(async (req, res) => {
         const { name, description, quantity, unit, price } = req.body;
@@ -88,6 +131,8 @@ class UserController{
         await LogService.createLog("Delete medicine success", result.message, "success");
         return res.status(result.code).json(result);
     });
+
+
 }
 
 module.exports = new UserController();

@@ -35,3 +35,13 @@ cron.schedule("*/5 * * * *", async () => {
     console.error("Error auto-cancelling appointments:", err);
   }
 });
+
+cron.schedule('0 0 * * *', async () => {
+    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    try {
+        await AdminService.addDailySchedulesForAllEmployees(today);
+        console.log('Daily schedules created for all employees');
+    } catch (err) {
+        console.error('Failed to create daily schedules:', err);
+    }
+});
