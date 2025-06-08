@@ -3,7 +3,7 @@
 const db = require('../config/db');
 
 class AppointmentService {
-    static async getAppointments(userId) {
+  static async getAppointments(userId) {
         try {
             const [rows] = await db.query('SELECT * FROM appointments WHERE userId = ?', [userId]);
             return rows;
@@ -13,7 +13,7 @@ class AppointmentService {
         }
     }
 
-      static async makeAppointment(userId, appointmentDate, doctorId) {
+  static async makeAppointment(userId, appointmentDate, doctorId) {
     // Check if the user exists
     const [userRows] = await db.query("SELECT * FROM users WHERE user_id = ?", [userId]);
     if (!userRows.length) return { code: 404, message: "User not found" };

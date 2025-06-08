@@ -73,7 +73,7 @@ class UserService{
       expiresIn: "1h",
     });
   
-    return { code: 200, message: "Login successful", token };
+    return { code: 200, message: "Login successful", token, role: user.role, userId: user.user_id };
   }
 
   static async getUsers(){

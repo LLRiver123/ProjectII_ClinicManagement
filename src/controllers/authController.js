@@ -35,12 +35,12 @@ class AuthController{
       login = asyncHandler(async (req, res) => {
         const { name, password } = req.body;
         if (!name || !password) {
-          await LogService.createLog("Login failed", "Missing required fields", "error");
+          await LogService.createLog(req.user?.id, "Login failed: Missing required fields");
           return res.status(400).json({ message: "Missing required fields" });
         }
         const result = await UserService.checkLogin(name, password);
         if (result.code !== 200) {
-          await LogService.createLog("Login failed", result.message, "error");
+          await LogService.createLog(req.user?.id, "Login failed: " + result.message);
           return res.status(result.code).json(result);
         }
         return res.status(result.code).json(result);
@@ -55,7 +55,7 @@ class AuthController{
     
         const result = await UserService.register(name, email, password);
         if (result.code !== 200) {
-          await LogService.createLog("Register failed", result.message, "error");
+          await LogService.createLog(req.user?.id, "Registration failed: " + result.message);
           return res.status(result.code).json(result);
         }
         return res.status(result.code).json(result);

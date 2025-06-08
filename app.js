@@ -1,5 +1,7 @@
 const express = require('express')
 const cron = require("node-cron");
+const AdminService = require('./src/service/adminService');
+const db = require('./src/config/db');
 
 require('dotenv').config()
 
@@ -8,6 +10,7 @@ const port = 3000
 
 const routes = require('./src/routes/index')
 
+app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/", routes);

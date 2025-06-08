@@ -1,7 +1,7 @@
 const db = require("../config/db");
 
 class LogService {
-  static async log(userId, action) {
+  static async createLog(userId, action) {
     try {
       await db.query("INSERT INTO logs (user_id, action) VALUES (?, ?)", [userId, action]);
     } catch (err) {

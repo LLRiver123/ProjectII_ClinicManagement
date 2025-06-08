@@ -22,10 +22,10 @@ class UserController{
         }
         const result = await UserService.deleteUser(userId);
         if (result.code !== 200) {
-            await LogService.createLog("Delete user failed", result.message, "error");
+            await LogService.createLog(req.user?.id, "Delete user failed: " );
             return res.status(result.code).json(result);
         }
-        await LogService.createLog("Delete user success", result.message, "success");
+        await LogService.createLog(req.user?.id, "Delete user success");
         return res.status(result.code).json(result);
         });    
 
@@ -36,17 +36,17 @@ class UserController{
         }
         const result = await UserService.updateRole(userId, role);
         if (result.code !== 200) {
-            await LogService.createLog("Update role failed", result.message, "error");
+            await LogService.createLog(req.user?.id, "Update role failed: ");
             return res.status(result.code).json(result);
         }
-        await LogService.createLog("Update role success", result.message, "success");
+        await LogService.createLog(req.user?.id, "Update role success");
         return res.status(result.code).json(result);
         });    
     
     makeAppointment = asyncHandler(async (req, res) => {
         const { userId, appointmentDate, doctorId } = req.body;
         if (!userId || !appointmentDate) {
-          await LogService.createLog("Make appointment failed", "Missing required fields", "error");
+          await LogService.createLog(req.user?.id, "Make appointment failed: Missing required fields");
           return res.status(400).json({ message: "Missing required fields" });
         }
         if (!doctorId) {
@@ -55,7 +55,7 @@ class UserController{
         }
         const result = await AppointmentService.makeAppointment(userId, appointmentDate, doctorId);
         if (result.code !== 200) {
-            await LogService.createLog("Make appointment failed", result.message, "error");
+            await LogService.createLog(req.user?.id, "Make appointment failed: " );
             return res.status(result.code).json(result);
         }
         return res.status(result.code).json(result);
@@ -68,6 +68,11 @@ class UserController{
         }
     
         const result = await AppointmentService.cancelAppointment(userId, appointmentId);
+        if (result.code !== 200) {
+            await LogService.createLog(req.user?.id, "Cancel appointment failed: ");
+            return res.status(result.code).json(result);
+        }
+        await LogService.createLog(req.user?.id, "Cancel appointment success");
         return res.status(result.code).json(result);
         });
 
@@ -78,10 +83,10 @@ class UserController{
         }
         const appointments = await AppointmentService.getAppointments(userId);
         if (appointments.code !== 200) {
-            await LogService.createLog("Get appointments failed", appointments.message, "error");
+            await LogService.createLog(req.user?.id, "Get appointments failed: ");
             return res.status(appointments.code).json(appointments);
         }
-        await LogService.createLog("Get appointments success", "Fetched appointments successfully", "success");
+        await LogService.createLog(req.user?.id, "Get appointments success");
         return res.status(appointments.code).json(appointments);
     });    
 
@@ -93,10 +98,10 @@ class UserController{
 
         const result = await MedicineService.addMedicine(name, description, quantity, unit, price);
         if (result.code !== 200) {
-            await LogService.createLog("Add medicine failed", result.message, "error");
+            await LogService.createLog(req.user?.id, "Add medicine failed");
             return res.status(result.code).json(result);
         }
-        await LogService.createLog("Add medicine success", result.message, "success");
+        await LogService.createLog(req.user?.id, "Add medicine success" );
         return res.status(result.code).json(result);
     });    
 
@@ -107,9 +112,9 @@ class UserController{
         }else {
             const result = await MedicineService.updateMedicine(medicineId, name, description, quantity, unit, price);
             if (result.code !== 200) {
-                await LogService.createLog("Update medicine failed", result.message, "error");
+                await LogService.createLog(req.user?.id, "Update medicine failed");
             }
-            await LogService.createLog("Update medicine success", result.message, "success");
+            await LogService.createLog(req.user?.id, "Update medicine success");
             return res.status(result.code).json(result);
         }
     })
@@ -125,10 +130,10 @@ class UserController{
 
         const result = await MedicineService.deleteMedicine(medicineId);
         if (result.code !== 200) {
-            await LogService.createLog("Delete medicine failed", result.message, "error");
+            await LogService.createLog(req.user?.id, "Delete medicine failed: ");
             return res.status(result.code).json(result);
         }
-        await LogService.createLog("Delete medicine success", result.message, "success");
+        await LogService.createLog(req.user?.id, "Delete medicine success");
         return res.status(result.code).json(result);
     });
 

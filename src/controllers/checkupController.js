@@ -9,7 +9,11 @@ const {asyncHandler} = require("../middleware/asyncHandler");
 class CheckupController {
   getCheckUp = asyncHandler(async (req, res) => {
     const result = await CheckupService.getAllCheckUps();
-    await LogService.createLog("Get all checkups", "Fetched all checkups successfully", "success");
+    if (result.code !== 200) {
+      await LogService.createLog(req.user?.id, "Get all checkups failed: ");
+      return res.status(result.code).json(result);
+    }
+    await LogService.createLog(req.user?.id, "Get all checkups success");
     return res.status(result.code).json(result);
   });
 
@@ -20,9 +24,10 @@ class CheckupController {
     }
     const result = await CheckupService.addCheckUp(appointmentId, diagnosis, prescription, note);
     if (result.code !== 200) {
-      await LogService.createLog("Add checkup failed", result.message, "error");
+      await LogService.createLog(req.user?.id, "Add checkup failed: " );
       return res.status(result.code).json(result);
     }
+    await LogService.createLog(req.user?.id, "Add checkup success");
     return res.status(result.code).json(result);
   });
 
