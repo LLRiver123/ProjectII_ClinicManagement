@@ -42,6 +42,15 @@ class AppointmentService {
   
     return { code: 200, message: "Appointment canceled successfully" };
   }
+
+  static async getAllAppointments() {
+    try {
+      const [rows] = await db.query('SELECT * FROM appointments');
+      return { code: 200, data: rows };
+    } catch (error) {
+      return { code: 500, message: error.message };
+    }
+  }
 }    
 
 module.exports = AppointmentService;

@@ -20,9 +20,8 @@ class WorkerMngController {
 
     // Add a new employee
     addEmployee = asyncHandler(async (req, res) => {
-        const { name, email, password, role } = req.body;
-        // You may want to hash the password here if needed
-        const result = await AdminService.addEmployee(name, email, password, role);
+        const { full_name, email, password, role, department, start_date } = req.body;
+        const result = await AdminService.addEmployee(full_name, email, password, role, department, start_date);
         if (result.code !== 201) {
             await LogService.createLog(req.user?.id, result.message);
             return res.status(result.code).json(result);
@@ -34,8 +33,7 @@ class WorkerMngController {
     // Update an employee
     updateEmployee = asyncHandler(async (req, res) => {
         const { id } = req.params;
-        const employeeData = req.body;
-        const result = await AdminService.updateEmployee(id, employeeData);
+        const result = await AdminService.updateEmployee(id, req.body);
         if (result.code !== 200) {
             await LogService.createLog(req.user?.id, result.message);
             return res.status(result.code).json(result);

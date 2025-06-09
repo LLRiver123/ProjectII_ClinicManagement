@@ -13,6 +13,7 @@ route.post("/cancelAppointment", checkAuth, userController.cancelAppointment);
 route.post("/updateRole", isAdmin, userController.updateRole);
 route.get("/getAppointments", checkAuth, userController.getAppointments);
 route.post("/deleteUser", isAdmin, userController.deleteUser);
+route.get("/getAllAppointments", isAdmin, userController.getAllAppointments);
 
 
 module.exports = route;

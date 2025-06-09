@@ -15,6 +15,8 @@ class UserController{
         return res.status(200).json(users);
         });
 
+
+
     deleteUser = asyncHandler(async (req, res) => {
         const { userId } = req.body;    
         if (!userId) {
@@ -89,6 +91,16 @@ class UserController{
         await LogService.createLog(req.user?.id, "Get appointments success");
         return res.status(appointments.code).json(appointments);
     });    
+
+    getAllAppointments = asyncHandler(async (req, res) => {
+        const appointments = await AppointmentService.getAllAppointments();
+        if (appointments.code !== 200) {
+            await LogService.createLog(req.user?.id, "Get all appointments failed: ");
+            return res.status(appointments.code).json(appointments);
+        }
+        await LogService.createLog(req.user?.id, "Get all appointments success");
+        return res.status(appointments.code).json(appointments);
+    });
 
     addMedicine = asyncHandler(async (req, res) => {
         const { name, description, quantity, unit, price } = req.body;
