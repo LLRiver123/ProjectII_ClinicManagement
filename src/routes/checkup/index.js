@@ -7,5 +7,7 @@ const checkupController = require('../../controllers/checkupController');
 
 route.get("/getCheckUp", checkAuth, checkupController.getCheckUp);
 route.post("/addCheckup", isDoctor, checkupController.addCheckUp);
+route.post("/addPrescription", isDoctor, checkupController.addPresciption);
+//route.get("/getPrescriptions", checkAuth, checkupController.getPrescriptions);
 
 module.exports = route;

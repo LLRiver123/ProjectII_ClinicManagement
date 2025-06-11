@@ -65,15 +65,36 @@ class WorkerMngController {
         res.status(result.code).json(result);
     });
 
-    updateSchedule = asyncHandler(async (req, res) => {
-        const { id } = req.params;
+    addSchedule = asyncHandler(async (req, res) => {
         const scheduleData = req.body;
-        const result = await AdminService.updateSchedule(id, scheduleData);
+        const result = await AdminService.addSchedule(scheduleData);
+        if (result.code !== 201) {
+            await LogService.createLog(req.user?.id, result.message);
+            return res.status(result.code).json(result);
+        }
+        await LogService.createLog(req.user?.id, "Add schedule success");
+        res.status(result.code).json(result);
+    });
+
+    updateSchedule = asyncHandler(async (req, res) => {
+        const scheduleData = req.body;
+        const result = await AdminService.updateSchedule(scheduleData);
         if (result.code !== 200) {
             await LogService.createLog(req.user?.id, result.message);
             return res.status(result.code).json(result);
         }
         await LogService.createLog(req.user?.id, "Update schedule success");
+        res.status(result.code).json(result);
+    });
+
+    deleteSchedule = asyncHandler(async (req, res) => {
+        const { id } = req.params;
+        const result = await AdminService.deleteSchedule(id);
+        if (result.code !== 200) {
+            await LogService.createLog(req.user?.id, result.message);
+            return res.status(result.code).json(result);
+        }
+        await LogService.createLog(req.user?.id, "Delete schedule success");
         res.status(result.code).json(result);
     });
 }

@@ -12,10 +12,7 @@ class AuthController{
     sendOTP = asyncHandler(async (req, res) => {
       console.log("req.body:", req.body);
         
-      const { email } = req.body;
-        if (!email) {
-          return res.status(400).json({ message: "Email is required" });
-        }
+      const email = req.body.email || req.body.params?.email;
     
         const result = await UserService.createOTP(email);
         return res.status(result.code).json(result);

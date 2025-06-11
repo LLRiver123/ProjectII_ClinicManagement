@@ -2,6 +2,7 @@ const express = require('express')
 const cron = require("node-cron");
 const AdminService = require('./src/service/adminService');
 const db = require('./src/config/db');
+const cors = require('cors');
 
 require('dotenv').config()
 
@@ -13,6 +14,12 @@ const routes = require('./src/routes/index')
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors({
+    origin: '*', // Cho phép tất cả các nguồn gốc
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Các phương thức HTTP được phép
+    allowedHeaders: ['Content-Type', 'Authorization'] // Các header được phép
+}));
 app.use("/", routes);
 app.listen(port, ()=>{
     console.log(`Server running on ${port}`)

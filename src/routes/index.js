@@ -6,6 +6,7 @@ router.use("/user", require("./user"));
 router.use("/meds", require("./meds"));
 router.use("/checkup", require("./checkup"));
 router.use("/addmin", require("./addmin"));
+router.use("/receptionist", require("./receptionist"));
 
 
 

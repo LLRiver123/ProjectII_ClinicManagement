@@ -99,6 +99,54 @@ class UserService{
     return { code: 200, message: "User role updated successfully" };
   }
 
+  static async updateUser(userId, fullName, email, phone, role) {
+    // Check if the user exists
+    const [userRows] = await db.query("SELECT * FROM users WHERE user_id = ?", [userId]);
+    if (!userRows.length) return { code: 404, message: "User not found" };
+  
+    // Update user information
+    for (const key of Object.keys(userRows[0])) {
+      if (key === 'user_id') continue; // Skip user_id as it should not be updated
+      
+      if (key === 'full_name' && fullName) {
+        await db.query(
+          "UPDATE users SET full_name = ? WHERE user_id = ?",
+          [fullName, userId]
+        );
+      }
+      if (key === 'email' && email) {
+        await db.query(
+          "UPDATE users SET email = ? WHERE user_id = ?",
+          [email, userId]
+        );
+      }
+      if (key === 'phone' && phone) {
+        await db.query(
+          "UPDATE users SET phone = ? WHERE user_id = ?",
+          [phone, userId]
+        );
+      }
+      if (key === 'role' && role) {
+        await db.query(
+          "UPDATE users SET role = ? WHERE user_id = ?",
+          [role, userId]
+        );
+      }
+
+    }
+  
+    return { code: 200, message: "User updated successfully" };
+  }
+
+  static async getDoctors() {
+    // Fetch all users with role 'doctor'
+    const [rows] = await db.query(
+      "SELECT * FROM users WHERE role = 'doctor'"
+    );
+    if (!rows.length) return { code: 404, message: "No doctors found" };
+    return { code: 200, message: "Success", data: rows };
+  }
+
   static async register(name, email, password) {
     // Check if the user already exists
     const [existingUser] = await db.query("SELECT * FROM users WHERE full_name = ? OR email = ?", [name, email]);

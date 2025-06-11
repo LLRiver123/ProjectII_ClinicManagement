@@ -44,6 +44,17 @@ class UserController{
         await LogService.createLog(req.user?.id, "Update role success");
         return res.status(result.code).json(result);
         });    
+
+    updateUser = asyncHandler(async (req, res) => {
+        const { userId, fullName, email, phone, role, status } = req.body;
+        const result = await UserService.updateUser(userId, fullName, email, phone, role, status);
+        if (result.code !== 200) {
+            await LogService.createLog(req.user?.id, "Update user failed: ");
+            return res.status(result.code).json(result);
+        }
+        await LogService.createLog(req.user?.id, "Update user success");
+        return res.status(result.code).json(result);
+    });    
     
     makeAppointment = asyncHandler(async (req, res) => {
         const { userId, appointmentDate, doctorId } = req.body;
@@ -90,7 +101,17 @@ class UserController{
         }
         await LogService.createLog(req.user?.id, "Get appointments success");
         return res.status(appointments.code).json(appointments);
-    });    
+    }); 
+    
+    getDoctors = asyncHandler(async (req, res) => {
+        const doctors = await UserService.getDoctors();
+        if (doctors.code !== 200) {
+            await LogService.createLog(req.user?.id, "Get doctors failed: ");
+            return res.status(doctors.code).json(doctors);
+        }
+        await LogService.createLog(req.user?.id, "Get doctors success");
+        return res.status(doctors.code).json(doctors);
+    });
 
     getAllAppointments = asyncHandler(async (req, res) => {
         const appointments = await AppointmentService.getAllAppointments();

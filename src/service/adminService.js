@@ -35,7 +35,7 @@ class AdminService {
             // 1. Create user
             const hashedPassword = await bcrypt.hash(password, 10);
             const [userResult] = await db.query(
-                'INSERT INTO users (full_name, email, password) VALUES (?, ?, ?)',
+                'INSERT INTO users (full_name, email, password_hash) VALUES (?, ?, ?)',
                 [full_name, email, hashedPassword]
             );
             const user_id = userResult.insertId;
@@ -119,12 +119,27 @@ class AdminService {
         }
     }
 
-
-    static async updateSchedule(id, { employee_id, work_date, shift }) {
+    static async addSchedule({ employee_id, work_date, shift, note = 'Lịch làm việc' }) {
+        if (!employee_id || !work_date || !shift) {
+            return { code: 400, message: "Missing required fields" };
+        }
         try {
             const [result] = await db.query(
-                'UPDATE schedules SET employee_id = ?, work_date = ?, shift = ? WHERE id = ?',
-                [employee_id, work_date, shift, id]
+                'INSERT INTO schedules (employee_id, work_date, shift, note) VALUES (?, ?, ?, ?)',
+                [employee_id, work_date, shift, note]
+            );
+            return { code: 201, message: "Schedule added successfully", scheduleId: result.insertId };
+        } catch (error) {
+            return { code: 500, message: error.message };
+        }
+    }   
+
+
+    static async updateSchedule({ employee_id, work_date, shift , note}) {
+        try {
+            const [result] = await db.query(
+                'UPDATE schedules SET employee_id = ?, work_date = ?, shift = ? WHERE note = ?',
+                [employee_id, work_date, shift,note]
             );
 
             if (result.affectedRows === 0) {
@@ -132,6 +147,18 @@ class AdminService {
             }
 
             return { code: 200, message: "Schedule updated successfully" };
+        } catch (error) {
+            return { code: 500, message: error.message };
+        }
+    }
+
+    static async deleteSchedule(schedule_id) {
+        try {
+            const [result] = await db.query('DELETE FROM schedules WHERE schedule_id = ?', [schedule_id]);
+            if (result.affectedRows === 0) {
+                return { code: 404, message: "Schedule not found" };
+            }
+            return { code: 200, message: "Schedule deleted successfully" };
         } catch (error) {
             return { code: 500, message: error.message };
         }

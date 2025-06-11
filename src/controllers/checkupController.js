@@ -31,6 +31,20 @@ class CheckupController {
     return res.status(result.code).json(result);
   });
 
+  addPresciption = asyncHandler(async (req, res) => {
+    const { recordId, prescriptions } = req.body;
+    if (!recordId || !prescriptions) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+    const result = await CheckupService.addPrescription(recordId, prescriptions);
+    if (result.code !== 200) {
+      console.error("Error adding prescription:", result.message);
+      await LogService.createLog(req.user?.id, "Add prescription failed: ");
+      return res.status(result.code).json(result);
+    }
+    await LogService.createLog(req.user?.id, "Add prescription success");
+    return res.status(result.code).json(result);
+  });
+   
 }
-
 module.exports = new CheckupController();
