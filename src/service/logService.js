@@ -8,6 +8,15 @@ class LogService {
       console.error("Logging failed:", err);
     }
   }
+  static async getSystemLogs() {
+    try {
+      const [rows] = await db.query("SELECT * FROM logs ORDER BY created_at DESC");
+      return { code: 200, data: rows };
+    } catch (err) {
+      console.error("Error fetching logs:", err);
+      return { code: 500, message: "Internal server error" };
+    }
+  }
 }
 
 module.exports = LogService;

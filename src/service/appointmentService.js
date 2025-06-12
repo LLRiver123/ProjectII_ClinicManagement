@@ -73,12 +73,12 @@ class AppointmentService {
   static async updateAppointment(appointmentId, appointmentDate, doctorId, status) {
     try {
       await db.query(
-        "UPDATE appointments SET appointment_time = ?, doctor_id = ? WHERE appointment_id = ?, status = ?",
-        [appointmentDate, doctorId, appointmentId, status]
+        "UPDATE appointments SET appointment_time = ?, doctor_id = ?,  status = ? WHERE appointment_id = ?",
+        [appointmentDate, doctorId, status, appointmentId]
       );
       return { code: 200, message: "Appointment updated successfully" };
     } catch (error) {
-      return { code: 500, message: error.message };
+      return { code: 500, message: error};
     }
   }
 }    

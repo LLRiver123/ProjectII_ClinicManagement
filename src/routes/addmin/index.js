@@ -14,6 +14,7 @@ route.get("/getAllSchedules", isAdmin, workerMngController.getAllSchedules);
 route.post("/updateSchedule/:id", isAdmin, workerMngController.updateSchedule);
 route.post("/addSchedule", isAdmin, workerMngController.addSchedule);
 route.delete("/deleteSchedule/:id", isAdmin, workerMngController.deleteSchedule);
+route.get("/getSystemLogs", isAdmin, workerMngController.getSystemLogs);
 
 
 module.exports = route;

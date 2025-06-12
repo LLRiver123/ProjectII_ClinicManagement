@@ -3,6 +3,8 @@ const cron = require("node-cron");
 const AdminService = require('./src/service/adminService');
 const db = require('./src/config/db');
 const cors = require('cors');
+const listEndpoints = require('express-list-endpoints');
+
 
 require('dotenv').config()
 
@@ -10,6 +12,8 @@ const app = express()
 const port = 3500
 
 const routes = require('./src/routes/index')
+
+let lastRunDate = null;
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -21,8 +25,13 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'] // Các header được phép
 }));
 app.use("/", routes);
+
 app.listen(port, ()=>{
     console.log(`Server running on ${port}`)
+    console.log("Available endpoints:");
+    listEndpoints(routes).forEach(endpoint => {
+        console.log(`${endpoint.methods.join(', ')} ${endpoint.path}`);
+    });
 })
 
 app.use((err, req, res, next) => {
@@ -32,6 +41,8 @@ app.use((err, req, res, next) => {
         message: err.message || "Đã có lỗi xảy ra!"
     });
 });
+
+
 
 cron.schedule("*/5 * * * *", async () => {
   try {
@@ -46,12 +57,19 @@ cron.schedule("*/5 * * * *", async () => {
   }
 });
 
-cron.schedule('0 0 * * *', async () => {
+cron.schedule('*/10 * * * *', async () => {
     const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
+    if (lastRunDate === today) {
+        // Already executed today
+        return;
+    }
+
     try {
         await AdminService.addDailySchedulesForAllEmployees(today);
-        console.log('Daily schedules created for all employees');
+        lastRunDate = today;
+        console.log(`[${new Date().toLocaleTimeString()}] Daily schedules created for all employees`);
     } catch (err) {
-        console.error('Failed to create daily schedules:', err);
+        console.error(`[${new Date().toLocaleTimeString()}] Failed to create daily schedules:`, err);
     }
 });

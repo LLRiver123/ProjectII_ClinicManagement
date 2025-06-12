@@ -97,6 +97,15 @@ class WorkerMngController {
         await LogService.createLog(req.user?.id, "Delete schedule success");
         res.status(result.code).json(result);
     });
+    getSystemLogs = asyncHandler(async (req, res) => {
+        const result = await LogService.getSystemLogs();
+        if (result.code !== 200) {
+            await LogService.createLog(req.user?.id, result.message);
+            return res.status(result.code).json(result);
+        }
+        await LogService.createLog(req.user?.id, "Get system logs success");
+        res.status(result.code).json(result);
+    });
 }
 
 module.exports = new WorkerMngController();

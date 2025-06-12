@@ -10,7 +10,7 @@ route.get("/allUsers",checkAuth,userController.getUsers);
 route.get("/getDoctors", checkAuth, userController.getDoctors);
 route.post("/makeAppointment", checkAuth, userController.makeAppointment);
 route.post("/cancelAppointment", checkAuth, userController.cancelAppointment);
-route.post("/updateRole", isAdmin, userController.updateRole);
+
 route.post("/getAppointments", checkAuth, userController.getAppointments);
 route.post("/deleteUser", isAdmin, userController.deleteUser);
 route.get("/getAllAppointments", checkAuth, userController.getAllAppointments);

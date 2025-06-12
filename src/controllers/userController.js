@@ -140,16 +140,14 @@ class UserController{
 
     updateMedicine = asyncHandler(async (req, res) => {
         const {medicineId, name, description, quantity, unit, price} = req.body;
-        if (!medicineId || !name || !description || !quantity || !unit || !price) {
-            return res.status(400).json({ message: "Missing required fields" });
-        }else {
-            const result = await MedicineService.updateMedicine(medicineId, name, description, quantity, unit, price);
-            if (result.code !== 200) {
-                await LogService.createLog(req.user?.id, "Update medicine failed");
-            }
-            await LogService.createLog(req.user?.id, "Update medicine success");
-            return res.status(result.code).json(result);
+        
+        const result = await MedicineService.updateMedicine(medicineId, name, description, quantity, unit, price);
+        if (result.code !== 200) {
+            await LogService.createLog(req.user?.id, "Update medicine failed");
         }
+        await LogService.createLog(req.user?.id, "Update medicine success");
+        return res.status(result.code).json(result);
+        
     })
     getMedicines = asyncHandler(async (req, res) => {
         const medicines = await MedicineService.getMedicines();

@@ -31,7 +31,7 @@ class CheckupController {
     return res.status(result.code).json(result);
   });
 
-  addPresciption = asyncHandler(async (req, res) => {
+  addPrescription = asyncHandler(async (req, res) => {
     const { recordId, prescriptions } = req.body;
     if (!recordId || !prescriptions) {
       return res.status(400).json({ message: "Missing required fields" });

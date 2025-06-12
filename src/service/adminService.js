@@ -165,35 +165,36 @@ class AdminService {
     }
 
 
-    static async addDailySchedulesForAllEmployees(work_date, shift = 'morning') {
-        try {
-            const [employees] = await db.query(
-                `SELECT id, role FROM employees WHERE status = 'active'`
-            );
+static async addDailySchedulesForAllEmployees(work_date, shift = 'morning') {
+    try {
+        const [employees] = await db.query(
+            `SELECT employee_id, role FROM employees WHERE status = 'active'`
+        );
 
-            const scheduleData = employees.map(emp => {
-                let note = 'Lịch làm việc';
-                if (emp.role === 'doctor') note = 'Khám bệnh';
-                else if (emp.role === 'receptionist') note = 'Tiếp tân';
-                else if (emp.role === 'admin') note = 'Quản lý hành chính';
+        const scheduleData = employees.map(emp => {
+            let note = 'Lịch làm việc';
+            if (emp.role === 'doctor') note = 'Khám bệnh';
+            else if (emp.role === 'receptionist') note = 'Tiếp tân';
+            else if (emp.role === 'admin') note = 'Quản lý hành chính';
 
-                return [emp.id, work_date, shift, note];
-            });
+            return [emp.employee_id, work_date, shift, note];
+        });
 
-            if (scheduleData.length === 0) {
-                return { code: 200, message: "Không có nhân viên nào để tạo lịch." };
-            }
-
-            await db.query(
-                `INSERT INTO schedules (employee_id, work_date, shift, note) VALUES ?`,
-                [scheduleData]
-            );
-
-            return { code: 201, message: "Schedules added for all active employees" };
-        } catch (error) {
-            return { code: 500, message: error.message };
+        if (scheduleData.length === 0) {
+            return { code: 200, message: "Không có nhân viên nào để tạo lịch." };
         }
+
+        await db.query(
+            `INSERT INTO schedules (employee_id, work_date, shift, note) VALUES ?`,
+            [scheduleData] // [[1, '2025-06-04', 'morning', 'Khám bệnh'], ...]
+        );
+
+        return { code: 201, message: "Schedules added for all active employees" };
+    } catch (error) {
+        return { code: 500, message: error.message };
     }
+}
+
 
     static async getAllLogs() {
         try {
