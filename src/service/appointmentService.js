@@ -81,6 +81,26 @@ class AppointmentService {
       return { code: 500, message: error};
     }
   }
+
+  static async getInvoiceByAppointmentId(appointmentId, userId) {
+    try {
+      appointment = await db.query(
+        "SELECT * FROM appointments WHERE appointment_id = ?",
+        [appointmentId]
+      );
+      if (appointment[0].patient_id !== userId) {
+        return { code: 403, message: "You do not have permission to view this invoice" };
+      }
+      const [rows] = await db.query(
+        "SELECT * FROM invoices WHERE appointment_id = ?",
+        [appointmentId]
+      );
+      if (!rows.length) return { code: 404, message: "Invoice not found" };
+      return { code: 200, data: rows[0] };
+    } catch (error) {
+      return { code: 500, message: error.message };
+    }
+  }
 }    
 
 module.exports = AppointmentService;

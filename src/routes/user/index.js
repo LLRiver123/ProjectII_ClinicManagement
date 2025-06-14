@@ -15,6 +15,7 @@ route.post("/getAppointments", checkAuth, userController.getAppointments);
 route.post("/deleteUser", isAdmin, userController.deleteUser);
 route.get("/getAllAppointments", checkAuth, userController.getAllAppointments);
 route.post("/updateUser", isAdmin, userController.updateUser);
+route.get("/getInvoiceByAppointmentId/:appointmentId", checkAuth, userController.getInvoiceByAppointmentId);
 
 
 

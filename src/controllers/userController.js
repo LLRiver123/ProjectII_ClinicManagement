@@ -167,6 +167,20 @@ class UserController{
         await LogService.createLog(req.user?.id, "Delete medicine success");
         return res.status(result.code).json(result);
     });
+    getInvoiceByAppointmentId = asyncHandler(async (req, res) => {
+        userId = req.user?.id;
+        const { appointmentId } = req.params;
+        if (!appointmentId) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+        const invoice = await AppointmentService.getInvoiceByAppointmentId(appointmentId, userId);
+        if (invoice.code !== 200) {
+            await LogService.createLog(req.user?.id, "Get invoice failed: ");
+            return res.status(invoice.code).json(invoice);
+        }
+        await LogService.createLog(req.user?.id, "Get invoice success");
+        return res.status(invoice.code).json(invoice);
+    });
 
 
 }
